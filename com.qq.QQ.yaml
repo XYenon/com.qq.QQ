@@ -119,13 +119,8 @@ modules:
           - bsdtar --to-stdout -xf qq.deb data.* | bsdtar -xf -
           - mv opt/QQ .
           - rm -rf qq.deb usr opt data.*
-          - sed -i '1 i require("/app/opt/LiteLoaderQQNT");' "QQ/resources/app/app_launcher/index.js"
-          - mkdir -p "QQ/resources/app/application"
-          - ln -s "/app/opt/LiteLoaderQQNT/preload.js" "QQ/resources/app/application/preload.js"
-          - ln -s "/app/opt/LiteLoaderQQNT/preload_login.js" "QQ/resources/app/application/preload_login.js"
-          - ln -s "/app/opt/LiteLoaderQQNT/preload_simple.js" "QQ/resources/app/application/preload_simple.js"
-          - ln -s "/app/opt/LiteLoaderQQNT/preload_webview.js" "QQ/resources/app/application/preload_webview.js"
-          - ln -s "/app/opt/LiteLoaderQQNT/preloadAux.js" "QQ/resources/app/application/preloadAux.js"
+          - echo 'require(String.raw`/app/opt/LiteLoaderQQNT`)' > 'QQ/resources/app/app_launcher/lite_loader.js'
+          - sed -i 's|./application/app_launcher/index.js|./app_launcher/lite_loader.js|' 'QQ/resources/app/package.json'
         dest-filename: apply_extra
 
       - type: file
@@ -167,14 +162,11 @@ modules:
       - cp -r * "$FLATPAK_DEST/opt/LiteLoaderQQNT"
     sources:
       - type: archive
-        url: https://github.com/LiteLoaderQQNT/LiteLoaderQQNT/releases/download/1.2.1/LiteLoaderQQNT.zip
-        sha256: affbd02573900d4f5743e33386d41b38adaac6ed9a130d57e7c8c75f8dc68838
+        url: https://github.com/LiteLoaderQQNT/LiteLoaderQQNT/releases/download/1.2.2/LiteLoaderQQNT.zip
+        sha256: a325c592ec53b7469c44f7eea5d27a0984e14d54ccd8d596446d0938bc91d561
         strip-components: 0
         x-checker-data:
           type: json
           url: https://api.github.com/repos/LiteLoaderQQNT/LiteLoaderQQNT/releases/latest
           version-query: ".tag_name"
           url-query: '.assets[] | select(.name=="LiteLoaderQQNT.zip") | .browser_download_url'
-
-      - type: dir
-        path: patch/application
